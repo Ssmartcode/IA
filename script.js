@@ -24,29 +24,34 @@ const messages = {
   won: "Mult noroc data viitoare",
 };
 
-const init = function () {
-  scores = [0, 0];
-  currentScore = 0;
-  activePlayer = 0;
-  playing = true;
-  messageBox.innerHTML = messages.welcome;
-
-  playerScore.textContent = 0;
-  playerCurrent.textContent = 0;
-  aiScore.textContent = 0;
-  aiCurrent.textContent = 0;
-
-  diceEl.classList.add("hidden");
-  player.classList.remove("player--winner");
-  player.classList.add("player--active");
-  playerAi.classList.remove("player--winner");
-  playerAi.classList.remove("player--active");
-};
 init();
-const displayMessage = (message) => {
-  messageBox.innerHTML = message;
-};
-const playerAiTurn = () => {
+//FUNCTII PENTRU EVENIMENTE
+btnRoll.addEventListener("click", function () {
+  if (activePlayer === 0 && playing) {
+    const dice = Math.trunc(Math.random() * 6) + 1;
+    diceEl.classList.remove("hidden");
+    diceEl.src = `zaruri/zar${dice}.png`;
+    if (dice !== 1) {
+      currentScore += dice;
+      document.getElementById(
+        `current--${activePlayer}`
+      ).textContent = currentScore;
+    } else {
+      player.classList.remove("player--active");
+      currentScore = 0;
+      playerCurrent.textContent = 0;
+      activePlayer = 1;
+      playerAiTurn();
+    }
+  }
+});
+
+btnHold.addEventListener("click", hold);
+
+btnNew.addEventListener("click", init);
+
+// LOGICA DIN SPATELE JUCATORULUI AI
+function playerAiTurn() {
   diceEl.classList.remove("hidden");
   if (playing && activePlayer == 1) {
     playerAi.classList.add("player--active");
@@ -74,34 +79,10 @@ const playerAiTurn = () => {
         activePlayer = 0;
         clearInterval(aiPlays);
       }
-    }, 1500);
+    }, 2000);
   }
-};
-
-btnRoll.addEventListener("click", function () {
-  if (activePlayer === 0 && playing) {
-    const dice = Math.trunc(Math.random() * 6) + 1;
-    diceEl.classList.remove("hidden");
-    diceEl.src = `zaruri/zar${dice}.png`;
-    if (dice !== 1) {
-      currentScore += dice;
-      document.getElementById(
-        `current--${activePlayer}`
-      ).textContent = currentScore;
-    } else {
-      player.classList.remove("player--active");
-      currentScore = 0;
-      playerCurrent.textContent = 0;
-      activePlayer = 1;
-      playerAiTurn();
-    }
-  }
-});
-
-btnHold.addEventListener("click", hold);
-
-btnNew.addEventListener("click", init);
-
+}
+// FUNCTIE CE RETINE SCORUL SI DECIDE CASTIGATORUL
 function hold() {
   if (playing) {
     scores[activePlayer] += currentScore;
@@ -113,16 +94,19 @@ function hold() {
     ).textContent = currentScore;
     player.classList.toggle("player--active");
     playerAi.classList.toggle("player--active");
+    // DECID CASTIGATORUL
     if (scores[activePlayer] >= 50) {
       playing = false;
       diceEl.classList.add("hidden");
-
       document
         .querySelector(`.player--${activePlayer}`)
         .classList.add("player--winner");
       document
         .querySelector(`.player--${activePlayer}`)
         .classList.remove("player--active");
+      activePlayer === 1
+        ? displayMessage(messages.won)
+        : displayMessage(messages.lost);
     } else if (activePlayer === 0) {
       activePlayer = 1;
       playerAiTurn();
@@ -131,10 +115,33 @@ function hold() {
     }
   }
 }
-
+// DECID ATUNCI CAND JUCATORUL AI RETINE SCORUL
 function calculateHoldScore(score) {
   const random = Math.trunc(Math.random() * 10 + 10);
   if (score > random) {
     return true;
   }
+}
+//AFISEZ MESAJUL
+function displayMessage(message) {
+  messageBox.innerHTML = message;
+}
+//INITIALIZEZ TOATE VARIABILELE LA 0
+function init() {
+  scores = [0, 0];
+  currentScore = 0;
+  activePlayer = 0;
+  playing = true;
+  messageBox.innerHTML = messages.welcome;
+
+  playerScore.textContent = 0;
+  playerCurrent.textContent = 0;
+  aiScore.textContent = 0;
+  aiCurrent.textContent = 0;
+
+  diceEl.classList.add("hidden");
+  player.classList.remove("player--winner");
+  player.classList.add("player--active");
+  playerAi.classList.remove("player--winner");
+  playerAi.classList.remove("player--active");
 }
