@@ -1,6 +1,5 @@
 "use strict";
 
-// Selecting elements
 const player = document.querySelector(".player--0");
 const playerScore = document.querySelector("#score--0");
 const playerCurrent = document.getElementById("current--0");
@@ -24,7 +23,7 @@ const messages = {
   lost: "Felicitari, ai castigat",
   won: "Mult noroc data viitoare",
 };
-// Starting conditions
+
 const init = function () {
   scores = [0, 0];
   currentScore = 0;
