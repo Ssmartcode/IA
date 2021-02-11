@@ -15,22 +15,22 @@ const btnHold = document.querySelector(".btn--hold");
 
 let scores, currentScore, activePlayer, playing;
 const messages = {
-  welcome: "Ma bucur sa te vad",
-  myTurn: "Este randul meu sa joc",
-  yourTurn: "Fata zarului arata 1. Este randul tau acum",
-  dice: "Zarul aruncat a fost un: ",
-  hold: "Voi retine scorul",
-  lost: "Felicitari, ai castigat",
-  won: "Mult noroc data viitoare",
+  welcome: "Welcome! Lets roll the dice",
+  myTurn: "It is my turn now",
+  yourTurn: "Your turn now",
+  dice: "I rolled: ",
+  hold: "I will hold the score",
+  lost: "Congratz, you won",
+  won: "Best of luck next time",
 };
 
 init();
-//FUNCTII PENTRU EVENIMENTE
+//
 btnRoll.addEventListener("click", function () {
   if (activePlayer === 0 && playing) {
     const dice = Math.trunc(Math.random() * 6) + 1;
     diceEl.classList.remove("hidden");
-    diceEl.src = `zaruri/zar${dice}.png`;
+    diceEl.src = `diceImages/zar${dice}.png`;
     if (dice !== 1) {
       currentScore += dice;
       document.getElementById(
@@ -49,40 +49,52 @@ btnRoll.addEventListener("click", function () {
 btnHold.addEventListener("click", hold);
 
 btnNew.addEventListener("click", init);
-
+// Pause the game
+const pause = (sec) =>
+  new Promise((resolve) => setTimeout(resolve, sec * 1000));
 // LOGICA DIN SPATELE JUCATORULUI AI
-function playerAiTurn() {
-  diceEl.classList.remove("hidden");
-  if (playing && activePlayer == 1) {
-    playerAi.classList.add("player--active");
-    displayMessage(messages.myTurn);
-    let dice = 0;
-
-    let aiPlays = setInterval(() => {
-      dice = Math.trunc(Math.random() * 6) + 1;
-      displayMessage(messages.dice + dice);
-      diceEl.src = `zaruri/zar${dice}.png`;
-      currentScore += dice;
+async function playerAiTurn() {
+  if (!playing && !activePlayer == 1) return;
+  playerAi.classList.add("player--active");
+  displayMessage(messages.myTurn);
+  await pause(1);
+  // keep on playing till 1 is rolled or hold
+  while (true) {
+    // roll the dice and display it on screen
+    let dice = Math.trunc(Math.random() * 6) + 1;
+    displayMessage(messages.dice + dice);
+    diceEl.src = `diceImages/zar${dice}.png`;
+    diceEl.classList.remove("hidden");
+    // update the score
+    currentScore += dice;
+    aiCurrent.textContent = currentScore;
+    await pause(1.5);
+    // check if computer rolls 1
+    if (dice === 1) {
+      // update the score
+      currentScore = 0;
       aiCurrent.textContent = currentScore;
-      const holdScore = calculateHoldScore(currentScore);
-      if (dice === 1) {
-        currentScore = 0;
-        aiCurrent.textContent = currentScore;
-        displayMessage(messages.yourTurn);
-        activePlayer = 0;
-        playerAi.classList.remove("player--active");
-        player.classList.add("player--active");
-        clearInterval(aiPlays);
-      } else if (holdScore) {
-        displayMessage(messages.dice + dice + ". " + messages.hold);
-        hold();
-        activePlayer = 0;
-        clearInterval(aiPlays);
-      }
-    }, 2000);
+      displayMessage(messages.yourTurn);
+      // switch player
+      activePlayer = 0;
+      playerAi.classList.remove("player--active");
+      player.classList.add("player--active");
+      break;
+    }
+    // decide if the computer holds the current score
+    const holdScore =
+      calculateHoldScore(currentScore) ||
+      scores[activePlayer] + currentScore >= 50;
+    if (holdScore) {
+      displayMessage(messages.hold);
+      hold();
+      activePlayer = 0;
+      break;
+    }
   }
 }
-// FUNCTIE CE RETINE SCORUL SI DECIDE CASTIGATORUL
+
+// HOLD THE SCORE AND FIND THE WINNDER
 function hold() {
   if (playing) {
     scores[activePlayer] += currentScore;
@@ -94,7 +106,8 @@ function hold() {
     ).textContent = currentScore;
     player.classList.toggle("player--active");
     playerAi.classList.toggle("player--active");
-    // DECID CASTIGATORUL
+
+    // CHOOSE THE WINNER
     if (scores[activePlayer] >= 50) {
       playing = false;
       diceEl.classList.add("hidden");
@@ -124,7 +137,7 @@ function calculateHoldScore(score) {
 }
 //AFISEZ MESAJUL
 function displayMessage(message) {
-  messageBox.innerHTML = message;
+  messageBox.textContent = message;
 }
 //INITIALIZEZ TOATE VARIABILELE LA 0
 function init() {
@@ -132,7 +145,7 @@ function init() {
   currentScore = 0;
   activePlayer = 0;
   playing = true;
-  messageBox.innerHTML = messages.welcome;
+  messageBox.textContent = messages.welcome;
 
   playerScore.textContent = 0;
   playerCurrent.textContent = 0;

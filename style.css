@@ -12,27 +12,30 @@ html {
 }
 
 body {
-  font-family: "Nunito", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 400;
   height: 100vh;
   color: #333;
-  background-image: linear-gradient(to top left, #ee9595 0%, #ef4f4f 100%);
+  background-image: linear-gradient(to right, #44a08d 0%, #093637 100%);
   display: flex;
+  flex-flow: column;
   align-items: center;
   justify-content: center;
 }
-.message {
-  top: 100px;
-  position: absolute;
-  width: 600px;
+.message-box {
+  position: relative;
+  min-width: 600px;
   color: #333;
   background-color: #f4f4f4;
-  border-radius: 20px;
+  border-radius: 15px;
   font-size: 2.5rem;
   font-weight: bold;
   padding: 1rem;
   text-align: center;
+  transform: translateY(50%);
+  z-index: 100;
 }
+
 /* LAYOUT */
 main {
   position: relative;
@@ -63,7 +66,7 @@ main {
   text-transform: uppercase;
   letter-spacing: 1px;
   word-spacing: 2px;
-  font-weight: 300;
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
@@ -89,7 +92,7 @@ main {
 }
 
 .current {
-  background-color: #74c7b8;
+  background-color: #a04457;
   opacity: 0.8;
   border-radius: 9px;
   color: #fff;
@@ -141,13 +144,28 @@ main {
 }
 
 .btn--new {
-  top: 4rem;
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  cursor: pointer;
+  width: 30px;
 }
 .btn--roll {
   top: 39.3rem;
+  display: flex;
+  align-items: center;
+}
+.btn--roll > img {
+  width: 30px;
 }
 .btn--hold {
   top: 46.1rem;
+  display: flex;
+  align-items: center;
+}
+.btn--hold > img {
+  width: 30px;
+  margin-right: 5px;
 }
 
 .btn:active {
@@ -166,9 +184,10 @@ main {
   transform: translateX(-50%);
   height: 10rem;
   box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.2);
+  line-height: 0;
 }
 
-.player--winner {
+img .player--winner {
   background-color: #2f2f2f;
 }
 
