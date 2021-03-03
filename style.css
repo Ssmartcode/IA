@@ -150,6 +150,9 @@ main {
   cursor: pointer;
   width: 30px;
 }
+.btn-new-active {
+  transform: rotate(90deg);
+}
 .btn--roll {
   top: 39.3rem;
   display: flex;
@@ -187,7 +190,7 @@ main {
   line-height: 0;
 }
 
-img .player--winner {
+.player--winner {
   background-color: #2f2f2f;
 }
 

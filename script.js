@@ -25,7 +25,7 @@ const messages = {
 };
 
 init();
-//
+// EVENT LISTENERS
 btnRoll.addEventListener("click", function () {
   if (activePlayer === 0 && playing) {
     const dice = Math.trunc(Math.random() * 6) + 1;
@@ -46,13 +46,17 @@ btnRoll.addEventListener("click", function () {
   }
 });
 
-btnHold.addEventListener("click", hold);
+btnHold.addEventListener("click", () => {
+  if (activePlayer === 1) return;
+  hold();
+});
 
 btnNew.addEventListener("click", init);
 // Pause the game
 const pause = (sec) =>
   new Promise((resolve) => setTimeout(resolve, sec * 1000));
-// LOGICA DIN SPATELE JUCATORULUI AI
+
+// AI PLAYER TURN
 async function playerAiTurn() {
   if (!playing && !activePlayer == 1) return;
   playerAi.classList.add("player--active");
@@ -94,7 +98,7 @@ async function playerAiTurn() {
   }
 }
 
-// HOLD THE SCORE AND FIND THE WINNDER
+// HOLD THE SCORE AND FIND THE WINNER
 function hold() {
   if (playing) {
     scores[activePlayer] += currentScore;
